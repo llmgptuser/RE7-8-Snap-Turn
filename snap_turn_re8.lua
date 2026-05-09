@@ -82,9 +82,8 @@ re.on_frame(function()
         return
     end
 
-    local menu_manager = sdk.get_managed_singleton("app.MenuManager")
-
     if is_re7 then
+        local menu_manager = sdk.get_managed_singleton("app.MenuManager")
         if menu_manager ~= nil then
             if menu_manager:call("isOpenInventoryMenu") then
                 return
@@ -92,6 +91,18 @@ re.on_frame(function()
             if not menu_manager:call("isCanOpenQuickSlotMenu") then
                 return
             end                
+        end
+    end
+
+    if is_re8 then
+        local GUIManager = sdk.get_managed_singleton("app.GUIManager")
+        if GUIManager ~= nil then
+            if GUIManager:call("isShowingGUIInventory") then
+                return
+            end
+            if GUIManager:call("isShowingGUIShop") then
+                return
+            end
         end
     end
 
