@@ -89,6 +89,9 @@ re.on_frame(function()
             if menu_manager:call("isOpenInventoryMenu") then
                 return
             end
+            if not menu_manager:call("isCanOpenQuickSlotMenu") then
+                return
+            end                
         end
     end
 
