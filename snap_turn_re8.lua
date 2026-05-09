@@ -1,5 +1,8 @@
-local gn = reframework:get_game_name()
-if gn ~= "re7" and gn ~= "re8" then 
+local game_name = reframework:get_game_name()
+local is_re7 = game_name == "re7"
+local is_re8 = game_name == "re8"
+
+if not is_re7 and not is_re8 then
     return
 end
 
@@ -66,6 +69,7 @@ local is_stick_centered_y = true
 local snap_turn = false
 local snap_turn_sign = 0
 local snap_turn_back = false
+local snap_turn_nonvr = false
 
 re.on_frame(function()
     if not cfg.snap_turn_enabled then
@@ -74,8 +78,18 @@ re.on_frame(function()
     if not re8vr.player then
         return 
     end
-    if not vrmod:is_hmd_active() then
+    if not snap_turn_nonvr and not vrmod:is_hmd_active() then
         return
+    end
+
+    local menu_manager = sdk.get_managed_singleton("app.MenuManager")
+
+    if is_re7 then
+        if menu_manager ~= nil then
+            if menu_manager:call("isOpenInventoryMenu") then
+                return
+            end
+        end
     end
 
     local right_stick_axis = get_right_input_axis()
@@ -108,7 +122,7 @@ sdk.hook(
     function(args)
     end,
     function(retval)
-        if not cfg.snap_turn_enabled or not vrmod:is_hmd_active() then
+        if not cfg.snap_turn_enabled or (not snap_turn_nonvr and not vrmod:is_hmd_active()) then
             return retval
         end
         if snap_turn then
